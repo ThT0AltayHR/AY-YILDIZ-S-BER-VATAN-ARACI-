@@ -1,0 +1,14 @@
+[2026-05-08 17:45:24] [BİLGİ] [PHISHTANK SORGU] PhishTank Sorgu Modülü başlatıldı.
+[2026-05-08 17:45:24] [BİLGİ] [PHISHTANK SORGU] PhishTank cache yaşı kontrol ediliyor...
+[2026-05-08 17:45:24] [UYARI] [PHISHTANK SORGU] Cache dosyası yok.
+[2026-05-08 17:45:24] [UYARI] [PHISHTANK SORGU] Cache 6 saatten eski, güncelleniyor...
+[2026-05-08 17:45:24] [BİLGİ] [PHISHTANK SORGU] PhishTank veritabanı güncelleme başlatıldı.
+[2026-05-08 17:45:24] [BİLGİ] [PHISHTANK SORGU] PhishTank cache yaşı kontrol ediliyor...
+[2026-05-08 17:45:24] [UYARI] [PHISHTANK SORGU] Cache dosyası yok.
+[2026-05-08 17:45:28] [KRİTİK] [PHISHTANK SORGU] requests kütüphanesi yok. pip install requests
+[2026-05-08 17:45:44] [BİLGİ] [PHISHTANK SORGU] Domain temizleme başladı: 191.168.1.1
+[2026-05-08 17:45:44] [BASARILI] [PHISHTANK SORGU] Temiz domain: 191.168.1.1
+[2026-05-08 17:45:44] [BİLGİ] [PHISHTANK SORGU] PhishTank veritabanında aranıyor: 191.168.1.1
+[2026-05-08 17:45:46] [KRİTİK] [PHISHTANK SORGU] Cache dosyası yok. Önce güncelleyin.
+[2026-05-08 17:45:47] [BASARILI] [PHISHTANK SORGU] TXT Rapor oluşturuldu: raporlar/PHISHTANK_191.168.1.1_20260508_174546.txt
+[2026-05-08 17:45:54] [BİLGİ] [PHISHTANK SORGU] Kullanıcı çıkış yaptı.
