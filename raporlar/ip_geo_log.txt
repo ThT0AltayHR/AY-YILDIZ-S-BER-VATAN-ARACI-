@@ -1,0 +1,6 @@
+[2026-05-08 19:15:42] [BİLGİ] [IP GEOLOCATION TR KONTROL] IP Geolocation TR Kontrol Modülü başlatıldı.
+[2026-05-08 19:15:44] [BİLGİ] [IP GEOLOCATION TR KONTROL] Kullanıcı çıkış yaptı.
+[2026-05-08 20:42:36] [BİLGİ] [IP GEOLOCATION TR KONTROL] IP Geolocation TR Kontrol Modülü başlatıldı.
+[2026-05-08 20:42:55] [BİLGİ] [IP GEOLOCATION TR KONTROL] IP adresi sorgulanıyor: opcamera.xom
+[2026-05-08 20:42:55] [HATA] [IP GEOLOCATION TR KONTROL] IP bulunamadı: opcamera.xom
+[2026-05-08 20:43:03] [BİLGİ] [IP GEOLOCATION TR KONTROL] Kullanıcı çıkış yaptı.

@@ -12,3 +12,12 @@
 [2026-05-08 17:45:46] [KRİTİK] [PHISHTANK SORGU] Cache dosyası yok. Önce güncelleyin.
 [2026-05-08 17:45:47] [BASARILI] [PHISHTANK SORGU] TXT Rapor oluşturuldu: raporlar/PHISHTANK_191.168.1.1_20260508_174546.txt
 [2026-05-08 17:45:54] [BİLGİ] [PHISHTANK SORGU] Kullanıcı çıkış yaptı.
+[2026-05-08 19:14:41] [BİLGİ] [PHISHTANK SORGU] PhishTank Sorgu Modülü başlatıldı.
+[2026-05-08 19:14:41] [BİLGİ] [PHISHTANK SORGU] PhishTank cache yaşı kontrol ediliyor...
+[2026-05-08 19:14:41] [UYARI] [PHISHTANK SORGU] Cache dosyası yok.
+[2026-05-08 19:14:41] [UYARI] [PHISHTANK SORGU] Cache 6 saatten eski, güncelleniyor...
+[2026-05-08 19:14:41] [BİLGİ] [PHISHTANK SORGU] PhishTank veritabanı güncelleme başlatıldı.
+[2026-05-08 19:14:41] [BİLGİ] [PHISHTANK SORGU] PhishTank cache yaşı kontrol ediliyor...
+[2026-05-08 19:14:41] [UYARI] [PHISHTANK SORGU] Cache dosyası yok.
+[2026-05-08 19:14:47] [KRİTİK] [PHISHTANK SORGU] PhishTank güncelleme hatası: ('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer'))
+[2026-05-08 19:14:53] [BİLGİ] [PHISHTANK SORGU] Kullanıcı çıkış yaptı.

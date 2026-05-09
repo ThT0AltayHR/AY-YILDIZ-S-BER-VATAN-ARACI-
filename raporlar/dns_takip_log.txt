@@ -1,0 +1,2 @@
+[2026-05-08 19:14:33] [BİLGİ] [DNS TAKİP SİSTEMİ] DNS Takip Sistemi başlatıldı.
+[2026-05-08 19:14:36] [BİLGİ] [DNS TAKİP SİSTEMİ] Kullanıcı çıkış yaptı.

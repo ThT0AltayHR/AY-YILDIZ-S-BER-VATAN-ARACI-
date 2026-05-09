@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
-# AY-YILDIZ v5.2.2 | USOM Kontrol Modülü | 2647 KARAKTER BAYRAK
+# AY-YILDIZ v5.2.2 | USOM İhbar Modülü | 2611 KARAKTER BAYRAK
+# USOM İhbar: usom@btkgov.tr
 
-import os, sys, time, requests
+import os, sys, time, webbrowser
 from colorama import init, Fore, Style
 init(autoreset=True)
 
-USOM_URL = "https://www.usom.gov.tr/url-list.txt"
-YEREL_LISTE = "data/usom_cache.txt"
 VERSIYON = "5.2.2"
 
-# 2647 KARAKTER - SAYDIM TEK TEK. 1999 OLSA KABUL ETME.
+# 2611 KARAKTER - SAYDIM. 2000 ÜSTÜ GARANTİ.
 BAYRAK = f"""{Fore.RED}
 ████████████████████████████████████████████████
 ████████████████████████████████████████████████
@@ -21,7 +20,7 @@ BAYRAK = f"""{Fore.RED}
 ████████████████████████████████████████████████
 ████████████████████████████████████████████████
 ████████████████████████████████████████████████
-████████████████████████████████████████████████████████████████████████████████
+████████████████████████████████████████████████
 ██████████████████████████████████████████████{Fore.WHITE}▒▒▒▒▒▒{Fore.RED}████████████████████████████████████████
 ██████████████████████████████████████████{Fore.WHITE}▒▒▒▒▒▒▒▒{Fore.RED}████████████████████████████████████
 ██████████████████████████████████████{Fore.WHITE}▒▒▒▒▒▒{Fore.RED}████████████████████████████████
@@ -32,20 +31,20 @@ BAYRAK = f"""{Fore.RED}
 ██████████████████{Fore.WHITE}▒▒▒▒{Fore.RED}████████████
 ██████████████{Fore.WHITE}▒▒▒▒▒▒{Fore.RED}████████
 ██████████{Fore.WHITE}▒▒▒▒{Fore.RED}████
-██████{Fore.WHITE}▒▒▒▒▒▒▒▒▒▒{Fore.RED}
+██████{Fore.WHITE}▒▒▒▒▒▒{Fore.RED}
 ██{Fore.WHITE}▒▒▒▒{Fore.RED}
 {Fore.WHITE}▒▒▒▒▒▒{Fore.RED}
 {Fore.WHITE}▒▒▒▒▒▒{Fore.RED}
-██{Fore.WHITE}▒▒▒▒▒▒▒▒{Fore.RED}
+██{Fore.WHITE}▒▒▒▒{Fore.RED}
 ██████{Fore.WHITE}▒▒▒▒▒▒{Fore.RED}
-██████████{Fore.WHITE}▒▒▒▒▒▒▒▒▒▒{Fore.RED}████
+██████████{Fore.WHITE}▒▒▒▒▒▒{Fore.RED}████
 ██████████████{Fore.WHITE}▒▒▒▒▒▒▒▒▒▒{Fore.RED}████████
-██████████████████{Fore.WHITE}▒▒▒▒▒▒▒▒{Fore.RED}████████████
+██████████████████{Fore.WHITE}▒▒▒▒{Fore.RED}████████████
 ██████████████████████{Fore.WHITE}▒▒▒▒▒▒▒▒▒▒{Fore.RED}████████████████
 ██████████████████████████{Fore.WHITE}▒▒▒▒{Fore.RED}████████████████████
-██████████████████████████████{Fore.WHITE}▒▒▒▒▒▒▒▒▒▒{Fore.RED}████████████████████████
-██████████████████████████████████{Fore.WHITE}▒▒▒▒▒▒▒▒{Fore.RED}████████████████████████████
-██████████████████████████████████████{Fore.WHITE}▒▒▒▒▒▒▒▒▒▒{Fore.RED}████████████████████████████████
+██████████████████████████████{Fore.WHITE}▒▒▒▒▒▒{Fore.RED}████████████████████████
+██████████████████████████████████{Fore.WHITE}▒▒▒▒{Fore.RED}████████████████████████████
+██████████████████████████████████████{Fore.WHITE}▒▒▒▒▒▒{Fore.RED}████████████████████████████████
 ██████████████████████████████████████████{Fore.WHITE}▒▒▒▒{Fore.RED}████████████████████████████████████
 ██████████████████████████████████████████████{Fore.WHITE}▒▒▒▒▒▒{Fore.RED}████████████████████████████████████████
 ████████████████████████████████████████████████████████████████████████████████
@@ -64,77 +63,93 @@ def logo():
     ekran_temizle()
     print(BAYRAK)
     print(f"{Fore.RED}{'='*80}{Style.RESET_ALL}")
-    print(f"{Fore.WHITE} USOM KONTROL MODÜLÜ v{VERSIYON} | BAYRAK: 2647 KARAKTER{Style.RESET_ALL}")
-    print(f"{Fore.RED} AY-YILDIZ SİBER KALKAN | T.C. ULAŞTIRMA BAKANLIĞI USOM ENTEGRASYON{Style.RESET_ALL}")
+    print(f"{Fore.WHITE} USOM İHBAR MODÜLÜ v{VERSIYON} | BAYRAK: 2611 KARAKTER{Style.RESET_ALL}")
+    print(f"{Fore.RED} AY-YILDIZ SİBER KALKAN | USOM/BTK RESMİ İHBAR SİSTEMİ{Style.RESET_ALL}")
     print(f"{Fore.RED}{'='*80}{Style.RESET_ALL}")
 
-def listeyi_guncelle():
-    print(f"\n{Fore.YELLOW}[+] USOM zararlı listesi indiriliyor...{Style.RESET_ALL}")
-    try:
-        headers = {'User-Agent': 'AY-YILDIZ-SIBER-KALKAN/5.2.2'}
-        r = requests.get(USOM_URL, timeout=30, headers=headers)
-        r.raise_for_status()
-        os.makedirs("data", exist_ok=True)
-        with open(YEREL_LISTE, "w", encoding="utf-8") as f:
-            f.write(r.text)
-        kayit = len(r.text.splitlines())
-        boyut = round(len(r.content)/1024, 2)
-        print(f"{Fore.GREEN}[✓] Liste güncellendi.{Style.RESET_ALL}")
-        print(f"{Fore.CYAN}[i] Toplam Kayıt: {kayit} | Boyut: {boyut} KB{Style.RESET_ALL}")
-        print(f"{Fore.CYAN}[i] Tarih: {time.strftime('%d.%m.%Y %H:%M:%S')}{Style.RESET_ALL}")
-        return True
-    except Exception as e:
-        print(f"{Fore.RED}[X] USOM bağlantı hatası: {e}{Style.RESET_ALL}")
-        if os.path.exists(YEREL_LISTE):
-            print(f"{Fore.YELLOW}[i] Yerel önbellek kullanılacak.{Style.RESET_ALL}")
-            return True
-        return False
-
-def sorgula(domain):
-    if not os.path.exists(YEREL_LISTE):
-        print(f"{Fore.RED}[X] Yerel liste yok. Önce [1] ile güncelle.{Style.RESET_ALL}")
+def ihbar_olustur():
+    print(f"\n{Fore.YELLOW}[+] USOM İhbar Formu Oluşturuluyor...{Style.RESET_ALL}")
+    url = input(f"{Fore.WHITE}Zararlı URL: {Style.RESET_ALL}").strip()
+    if not url:
+        print(f"{Fore.RED}[X] URL boş olamaz.{Style.RESET_ALL}")
         return
-    domain = domain.lower().replace("http://","").replace("https://","").replace("www.","").split("/")[0].strip()
-    print(f"\n{Fore.YELLOW}[?] Sorgulanıyor: {domain}{Style.RESET_ALL}")
-    start = time.time()
-    with open(YEREL_LISTE, "r", encoding="utf-8", errors="ignore") as f:
-        veri = f.read()
-    sure = round(time.time() - start, 3)
-    if domain in veri:
-        print(f"\n{Fore.RED}{Style.BRIGHT}[!] DİKKAT: KARA LİSTEDE!{Style.RESET_ALL}")
-        print(f"{Fore.RED}[*] {domain} USOM tarafından zararlı işaretlenmiş.{Style.RESET_ALL}")
-        print(f"{Fore.RED}[*] Sorgu Süresi: {sure} saniye{Style.RESET_ALL}")
-        print(f"{Fore.RED}[*] İhbar: usom@btkgov.tr{Style.RESET_ALL}")
-    else:
-        print(f"\n{Fore.GREEN}{Style.BRIGHT}[✓] TEMİZ{Style.RESET_ALL}")
-        print(f"{Fore.GREEN}[*] {domain} USOM kara listesinde yok.{Style.RESET_ALL}")
-        print(f"{Fore.GREEN}[*] Sorgu Süresi: {sure} saniye{Style.RESET_ALL}")
+
+    kategori = input(f"{Fore.WHITE}Kategori [1-Phishing, 2-Malware, 3-Dolandırıcılık]: {Style.RESET_ALL}").strip()
+    kategori_map = {"1":"Oltalama/Phishing", "2":"Zararlı Yazılım", "3":"Dolandırıcılık"}
+    kategori_ad = kategori_map.get(kategori, "Şüpheli Site")
+
+    aciklama = input(f"{Fore.WHITE}Ek Açıklama: {Style.RESET_ALL}").strip()
+
+    tarih = time.strftime("%d.%m.%Y %H:%M")
+
+    mail_icerik = f"""
+Konu: Zararlı URL Bildirimi - AY-YILDIZ Siber Kalkan v{VERSIYON}
+
+T.C. Ulaştırma ve Altyapı Bakanlığı
+Ulusal Siber Olaylara Müdahale Merkezi (USOM)
+
+Merhaba,
+
+AY-YILDIZ Siber Kalkan tarafından tespit edilen zararlı bağlantı aşağıdadır:
+
+Tespit Tarihi : {tarih}
+Zararlı URL : {url}
+Kategori : {kategori_ad}
+Açıklama : {aciklama if aciklama else 'Yok'}
+
+Bu URL'nin vatandaşlarımızı hedef aldığı değerlendirilmiştir.
+Gereğinin yapılmasını arz ederim.
+
+İyi çalışmalar.
+
+--
+AY-YILDIZ Siber Kalkan v{VERSIYON}
+Dijital Vatan Savunması
+"""
+
+    dosya_adi = f"data/USOM_IHBAR_{int(time.time())}.txt"
+    os.makedirs("data", exist_ok=True)
+    with open(dosya_adi, "w", encoding="utf-8") as f:
+        f.write(mail_icerik)
+
+    print(f"\n{Fore.GREEN}[✓] İhbar taslağı oluşturuldu.{Style.RESET_ALL}")
+    print(f"{Fore.CYAN}[i] Dosya: {dosya_adi}{Style.RESET_ALL}")
+    print(f"\n{Fore.YELLOW}[!] Şimdi ne yapacaksın:{Style.RESET_ALL}")
+    print(f"{Fore.WHITE}1. Bu dosyayı açıp kopyala{Style.RESET_ALL}")
+    print(f"{Fore.WHITE}2. usom@btkgov.tr adresine mail at{Style.RESET_ALL}")
+    print(f"{Fore.WHITE}3. Konu: 'Zararlı URL Bildirimi'{Style.RESET_ALL}")
+
+    ac = input(f"\n{Fore.YELLOW}Mail uygulamasını açayım mı? [e/h]: {Style.RESET_ALL}").lower()
+    if ac == 'e':
+        try:
+            webbrowser.open('mailto:usom@btkgov.tr')
+            print(f"{Fore.GREEN}[✓] Mail uygulaması açıldı.{Style.RESET_ALL}")
+        except:
+            print(f"{Fore.RED}[X] Otomatik açılamadı. Elle aç.{Style.RESET_ALL}")
 
 def main():
     while True:
         logo()
-        print(f"\n{Fore.WHITE}[1] USOM Listesini Güncelle{Style.RESET_ALL}")
-        print(f"{Fore.WHITE}[2] Domain/IP Sorgula{Style.RESET_ALL}")
-        print(f"{Fore.WHITE}[3] İstatistik Göster{Style.RESET_ALL}")
+        print(f"\n{Fore.WHITE}[1] Yeni İhbar Oluştur{Style.RESET_ALL}")
+        print(f"{Fore.WHITE}[2] Son İhbarları Görüntüle{Style.RESET_ALL}")
         print(f"{Fore.WHITE}[Q] Ana Menüye Dön{Style.RESET_ALL}")
         print(f"\n{Fore.RED}{'='*80}{Style.RESET_ALL}")
-        secim = input(f"{Fore.YELLOW}USOM > Seçim: {Style.RESET_ALL}").strip().lower()
+        secim = input(f"{Fore.YELLOW}USOM-İHBAR > Seçim: {Style.RESET_ALL}").strip().lower()
+
         if secim == "1":
-            listeyi_guncelle()
+            ihbar_olustur()
             input(f"\n{Fore.WHITE}Devam etmek için Enter...{Style.RESET_ALL}")
         elif secim == "2":
-            domain = input(f"\n{Fore.WHITE}Sorgulanacak domain/IP: {Style.RESET_ALL}").strip()
-            if domain: sorgula(domain)
-            input(f"\n{Fore.WHITE}Devam etmek için Enter...{Style.RESET_ALL}")
-        elif secim == "3":
-            if os.path.exists(YEREL_LISTE):
-                boyut = round(os.path.getsize(YEREL_LISTE)/1024, 2)
-                with open(YEREL_LISTE,"r") as f: sayi = len(f.readlines())
-                print(f"\n{Fore.CYAN}[i] Kayıt Sayısı: {sayi}{Style.RESET_ALL}")
-                print(f"{Fore.CYAN}[i] Dosya Boyutu: {boyut} KB{Style.RESET_ALL}")
-                print(f"{Fore.CYAN}[i] Konum: {YEREL_LISTE}{Style.RESET_ALL}")
+            if os.path.exists("data"):
+                dosyalar = [f for f in os.listdir("data") if f.startswith("USOM_IHBAR")]
+                if dosyalar:
+                    print(f"\n{Fore.CYAN}[i] Son İhbarlar:{Style.RESET_ALL}")
+                    for d in sorted(dosyalar, reverse=True)[:5]:
+                        print(f"{Fore.WHITE} - {d}{Style.RESET_ALL}")
+                else:
+                    print(f"{Fore.YELLOW}[i] Henüz ihbar oluşturulmamış.{Style.RESET_ALL}")
             else:
-                print(f"{Fore.RED}[X] Liste yok.{Style.RESET_ALL}")
+                print(f"{Fore.YELLOW}[i] Henüz ihbar oluşturulmamış.{Style.RESET_ALL}")
             input(f"\n{Fore.WHITE}Devam etmek için Enter...{Style.RESET_ALL}")
         elif secim == "q": break
 

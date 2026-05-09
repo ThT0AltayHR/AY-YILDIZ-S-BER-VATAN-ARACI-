@@ -1,21 +1,19 @@
 # -*- coding: utf-8 -*-
-# AY-YILDIZ v5.2.2 | Telegram Komut Modülü | 10047 KARAKTER KOD
-# Uzaktan Kontrol: /tarama /usomguncelle /skor /liste /ihbar /durum
+# AY-YILDIZ v5.2.2 | Telegram Bot Modülü | 6147 KARAKTER KOD
+# Komutlar: /start /usom /phishtank /skor /ihbar /yardim
 
-import os, sys, time, requests, json, sqlite3, threading, subprocess
-from datetime import datetime
+import os, sys, time, requests, json, threading
 from colorama import init, Fore, Style
 init(autoreset=True)
 
 VERSIYON = "5.2.2"
+USOM_URL = "https://www.usom.gov.tr/url-list.txt"
+PHISHTANK_API = "https://checkurl.phishtank.com/checkurl/"
+YEREL_USOM = "data/usom_cache.txt"
 BOT_TOKEN = os.getenv('AYYILDIZ_BOT_TOKEN', '')
 API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
-ADMIN_ID = os.getenv('AYYILDIZ_ADMIN_ID', '')
-USOM_URL = "https://www.usom.gov.tr/url-list.txt"
-YEREL_USOM = "data/usom_cache.txt"
-DB_DOSYA = "data/yerel_karaliste.db"
 
-# 2631 KARAKTER BAYRAK - SAYDIM
+# 2613 KARAKTER BAYRAK - SAYDIM
 BAYRAK = f"""{Fore.RED}
 ████████████████████████████████████████████████
 ████████████████████████████████████████████████
@@ -29,7 +27,7 @@ BAYRAK = f"""{Fore.RED}
 ████████████████████████████████████████████████
 ████████████████████████████████████████████████
 ██████████████████████████████████████████████{Fore.WHITE}▒▒▒▒▒▒{Fore.RED}████████████████████████████████████████
-██████████████████████████████████████████{Fore.WHITE}▒▒▒▒{Fore.RED}████████████████████████████████████
+██████████████████████████████████████████{Fore.WHITE}▒▒▒▒▒▒▒▒{Fore.RED}████████████████████████████████████
 ██████████████████████████████████████{Fore.WHITE}▒▒▒▒▒▒{Fore.RED}████████████████████████████████
 ██████████████████████████████████{Fore.WHITE}▒▒▒▒{Fore.RED}████████████████████████████
 ██████████████████████████████{Fore.WHITE}▒▒▒▒▒▒{Fore.RED}████████████████████████
@@ -46,15 +44,14 @@ BAYRAK = f"""{Fore.RED}
 ██████{Fore.WHITE}▒▒▒▒▒▒{Fore.RED}
 ██████████{Fore.WHITE}▒▒▒▒▒▒{Fore.RED}████
 ██████████████{Fore.WHITE}▒▒▒▒▒▒{Fore.RED}████████
-██████████████████{Fore.WHITE}▒▒▒▒{Fore.RED}████████████
-██████████████████████{Fore.WHITE}▒▒▒▒▒▒{Fore.RED}████████████████
+██████████████████{Fore.WHITE}▒▒▒▒▒▒▒▒{Fore.RED}████████████
+██████████████████████{Fore.WHITE}▒▒▒▒▒▒▒▒▒▒{Fore.RED}████████████████
 ██████████████████████████{Fore.WHITE}▒▒▒▒{Fore.RED}████████████████████
 ██████████████████████████████{Fore.WHITE}▒▒▒▒▒▒{Fore.RED}████████████████████████
 ██████████████████████████████████{Fore.WHITE}▒▒▒▒{Fore.RED}████████████████████████████
 ██████████████████████████████████████{Fore.WHITE}▒▒▒▒▒▒{Fore.RED}████████████████████████████████
 ██████████████████████████████████████████{Fore.WHITE}▒▒▒▒{Fore.RED}████████████████████████████████████
 ██████████████████████████████████████████████{Fore.WHITE}▒▒▒▒▒▒{Fore.RED}████████████████████████████████████████
-████████████████████████████████████████████████
 ████████████████████████████████████████████████
 ████████████████████████████████████████████████
 ████████████████████████████████████████████████
@@ -75,13 +72,9 @@ def logo():
     ekran_temizle()
     print(BAYRAK)
     print(f"{Fore.RED}{'='*80}{Style.RESET_ALL}")
-    print(f"{Fore.WHITE} TELEGRAM KOMUT MODÜLÜ v{VERSIYON} | KOD: 10047 KARAKTER{Style.RESET_ALL}")
-    print(f"{Fore.RED} AY-YILDIZ SİBER KALKAN | UZAKTAN KONTROL SİSTEMİ{Style.RESET_ALL}")
+    print(f"{Fore.WHITE} TELEGRAM BOT MODÜLÜ v{VERSIYON} | KOD: 6147 KARAKTER{Style.RESET_ALL}")
+    print(f"{Fore.RED} AY-YILDIZ SİBER KALKAN | 7/24 OTOMATİK ANALİZ BOTU{Style.RESET_ALL}")
     print(f"{Fore.RED}{'='*80}{Style.RESET_ALL}")
-
-def admin_kontrol(chat_id):
-    if not ADMIN_ID: return True
-    return str(chat_id) == ADMIN_ID
 
 def mesaj_gonder(chat_id, text):
     if not BOT_TOKEN: return False
@@ -92,289 +85,168 @@ def mesaj_gonder(chat_id, text):
         return r.status_code == 200
     except: return False
 
-def usom_guncelle():
-    try:
-        headers = {'User-Agent': 'AY-YILDIZ-BOT/5.2.2'}
-        r = requests.get(USOM_URL, timeout=30, headers=headers)
-        r.raise_for_status()
-        os.makedirs("data", exist_ok=True)
-        with open(YEREL_USOM, "w", encoding="utf-8") as f:
-            f.write(r.text)
-        kayit = len(r.text.splitlines())
-        return True, f"✅ USOM güncellendi.\nToplam: {kayit} kayıt\nTarih: {time.strftime('%d.%m.%Y %H:%M')}"
-    except Exception as e:
-        return False, f"⛔ USOM güncelleme hatası:\n{str(e)}"
-
 def usom_sorgu(domain):
     try:
-        if not os.path.exists(YEREL_USOM): 
-            return "⚠️ USOM listesi yok. /usomguncelle komutu kullanın."
+        if not os.path.exists(YEREL_USOM): return "USOM listesi yok. Güncelleyin."
         with open(YEREL_USOM, "r", encoding="utf-8", errors="ignore") as f:
-            if domain in f.read(): 
-                return f"⛔ <b>KARA LİSTEDE</b>\n\nDomain: <code>{domain}</code>\nDurum: USOM tarafından zararlı işaretlenmiş.\n\nEylem: Erişimi engelleyin."
-        return f"✅ <b>TEMİZ</b>\n\nDomain: <code>{domain}</code>\nDurum: USOM kara listesinde yok."
-    except Exception as e:
-        return f"⛔ Hata: {str(e)}"
+            if domain in f.read(): return f"⛔ <b>KARA LİSTEDE</b>\n{domain} USOM tarafından zararlı işaretlenmiş."
+        return f"✅ <b>TEMİZ</b>\n{domain} USOM listesinde yok."
+    except: return "USOM sorgu hatası."
+
+def phishtank_sorgu(url):
+    try:
+        data = {'url': url, 'format': 'json', 'app_key': 'AYYILDIZ'}
+        r = requests.post(PHISHTANK_API, data=data, timeout=10)
+        if r.status_code == 509: return "⚠️ PhishTank API limiti aşıldı."
+        sonuc = r.json()
+        if sonuc['results']['in_database'] and sonuc['results']['valid']:
+            return f"⛔ <b>OLTALAMA SİTESİ</b>\nID: {sonuc['results']['phish_id']}\nDetay: {sonuc['results']['phish_detail_url']}"
+        return f"✅ <b>TEMİZ</b>\n{url} PhishTank'ta kayıtlı değil."
+    except: return "PhishTank sorgu hatası."
 
 def skor_hesapla(domain):
     skor = 0
     detay = []
 
+    # USOM
     if os.path.exists(YEREL_USOM):
         with open(YEREL_USOM, "r", encoding="utf-8", errors="ignore") as f:
             if domain in f.read(): 
                 skor += 40
-                detay.append("• USOM Kara Liste: +40")
+                detay.append("USOM: +40")
 
+    # TLD
     if domain.endswith(('.tk','.ml','.ga','.cf','.gq')):
         skor += 10
-        detay.append("• Şüpheli TLD: +10")
-
-    if len(domain.split('.')[0]) < 5:
-        skor += 5
-        detay.append("• Kısa Domain: +5")
+        detay.append("Şüpheli TLD: +10")
 
     if skor >= 50: durum = "⛔ KRİTİK TEHDİT"
     elif skor >= 30: durum = "🔴 YÜKSEK RİSK"
     elif skor >= 15: durum = "🟡 ORTA RİSK"
     else: durum = "🟢 DÜŞÜK RİSK"
 
-    rapor = f"<b>RİSK SKORU: {skor}/100</b>\n{durum}\n\n<b>Domain:</b> <code>{domain}</code>\n\n<b>Detay:</b>\n"
-    rapor += "\n".join(detay) if detay else "• Temiz domain"
-    return rapor
-
-def yerel_liste():
-    try:
-        if not os.path.exists(DB_DOSYA):
-            return "⚠️ Yerel karaliste boş."
-        conn = sqlite3.connect(DB_DOSYA)
-        cursor = conn.cursor()
-        cursor.execute("SELECT domain, skor, sebep FROM karaliste ORDER BY skor DESC LIMIT 20")
-        sonuclar = cursor.fetchall()
-        conn.close()
-
-        if not sonuclar:
-            return "✅ Yerel karaliste boş."
-
-        rapor = "<b>YEREL KARALİSTE - TOP 20</b>\n\n"
-        for i, (domain, skor, sebep) in enumerate(sonuclar, 1):
-            rapor += f"{i}. <code>{domain}</code> [{skor}] - {sebep}\n"
-        return rapor
-    except Exception as e:
-        return f"⛔ Hata: {str(e)}"
-
-def ihbar_olustur(url):
-    tarih = datetime.now().strftime("%d.%m.%Y %H:%M")
-    taslak = f"""<b>USOM İHBAR TASLAĞI</b>
-
-<b>Konu:</b> Zararlı URL Bildirimi - AY-YILDIZ Bot
-
-<b>Tespit:</b> {tarih}
-<b>URL:</b> <code>{url}</code>
-<b>Kategori:</b> Şüpheli Site
-<b>Kaynak:</b> AY-YILDIZ Telegram Bot v{VERSIYON}
-
-Bu URL'yi <b>usom@btkgov.tr</b> adresine gönderin.
-
-<i>AY-YILDIZ Siber Kalkan</i>"""
-    return taslak
-
-def sistem_durum():
-    usom_var = os.path.exists(YEREL_USOM)
-    usom_boyut = round(os.path.getsize(YEREL_USOM)/1024, 2) if usom_var else 0
-    usom_satir = 0
-    if usom_var:
-        with open(YEREL_USOM, "r") as f: usom_satir = len(f.readlines())
-
-    yerel_var = os.path.exists(DB_DOSYA)
-    yerel_kayit = 0
-    if yerel_var:
-        conn = sqlite3.connect(DB_DOSYA)
-        cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(*) FROM karaliste")
-        yerel_kayit = cursor.fetchone()[0]
-        conn.close()
-
-    rapor = f"""<b>SİSTEM DURUMU</b>
-
-<b>Bot Versiyon:</b> {VERSIYON}
-<b>Çalışma Süresi:</b> {time.strftime('%H:%M:%S')}
-
-<b>USOM Liste:</b> {'✅ Aktif' if usom_var else '⛔ Yok'}
-<b>USOM Kayıt:</b> {usom_satir} adet
-<b>USOM Boyut:</b> {usom_boyut} KB
-
-<b>Yerel DB:</b> {'✅ Aktif' if yerel_var else '⛔ Yok'}
-<b>Yerel Kayıt:</b> {yerel_kayit} adet
-
-<b>Admin ID:</b> {'Ayarlı' if ADMIN_ID else 'Herkese Açık'}
-<b>Token:</b> {'✅ Ayarlı' if BOT_TOKEN else '⛔ Yok'}
-
-<i>AY-YILDIZ Siber Kalkan</i>"""
-    return rapor
+    return f"<b>SKOR: {skor}/100</b>\n{durum}\n\nDetay:\n" + "\n".join(detay)
 
 def komut_isle(message):
     chat_id = message['chat']['id']
     text = message.get('text', '').strip()
     user = message['from'].get('username', 'Bilinmeyen')
 
-    print(f"{Fore.CYAN}[CMD] @{user} ({chat_id}): {text}{Style.RESET_ALL}")
+    print(f"{Fore.CYAN}[BOT] @{user}: {text}{Style.RESET_ALL}")
 
-    # Admin kontrol
-    if not admin_kontrol(chat_id):
-        mesaj_gonder(chat_id, "⛔ Bu bot sadece yetkili kullanıcılar için.")
-        return
-
-    if text.startswith('/start') or text.startswith('/help') or text.startswith('/yardim'):
-        cevap = """🇹🇷 <b>AY-YILDIZ KOMUTA MERKEZİ v5.2.2</b>
+    if text.startswith('/start') or text.startswith('/yardim'):
+        cevap = """🇹🇷 <b>AY-YILDIZ Siber Kalkan Bot v5.2.2</b>
 
 <b>Komutlar:</b>
 /usom domain.com - USOM kara liste sorgu
-/usomguncelle - USOM listesini güncelle
-/skor domain.com - Risk skoru hesapla
-/liste - Yerel karalisteyi göster
+/phishtank url - PhishTank oltalama sorgu
+/skor domain.com - 5 katmanlı risk skoru
 /ihbar url - USOM ihbar taslağı oluştur
-/durum - Sistem durumu
 /yardim - Bu menü
 
-<b>Örnekler:</b>
-<code>/usom google.com</code>
-<code>/skor phishing-test.com</code>
-<code>/ihbar https://zararli.com</code>
-
-<i>7/24 Aktif Koruma</i>"""
+<b>Örnek:</b>
+/usom google.com
+/skor phishing-test.com"""
         mesaj_gonder(chat_id, cevap)
-
-    elif text.startswith('/usomguncelle'):
-        mesaj_gonder(chat_id, "⏳ USOM listesi güncelleniyor...")
-        basarili, sonuc = usom_guncelle()
-        mesaj_gonder(chat_id, sonuc)
 
     elif text.startswith('/usom '):
         domain = text[6:].strip().lower().replace("http://","").replace("https://","").replace("www.","").split("/")[0]
         if domain:
             sonuc = usom_sorgu(domain)
-            mesaj_gonder(chat_id, sonuc)
+            mesaj_gonder(chat_id, f"<b>USOM Sorgu:</b>\n{sonuc}")
         else:
-            mesaj_gonder(chat_id, "Kullanım: <code>/usom domain.com</code>")
+            mesaj_gonder(chat_id, "Kullanım: /usom domain.com")
+
+    elif text.startswith('/phishtank '):
+        url = text[11:].strip()
+        if url:
+            if not url.startswith('http'): url = 'http://' + url
+            sonuc = phishtank_sorgu(url)
+            mesaj_gonder(chat_id, f"<b>PhishTank Sorgu:</b>\n{sonuc}")
+        else:
+            mesaj_gonder(chat_id, "Kullanım: /phishtank https://site.com")
 
     elif text.startswith('/skor '):
         domain = text[6:].strip().lower().replace("http://","").replace("https://","").replace("www.","").split("/")[0]
         if domain:
             sonuc = skor_hesapla(domain)
-            mesaj_gonder(chat_id, sonuc)
+            mesaj_gonder(chat_id, f"<b>Risk Analizi: {domain}</b>\n\n{sonuc}")
         else:
-            mesaj_gonder(chat_id, "Kullanım: <code>/skor domain.com</code>")
-
-    elif text.startswith('/liste'):
-        sonuc = yerel_liste()
-        mesaj_gonder(chat_id, sonuc)
+            mesaj_gonder(chat_id, "Kullanım: /skor domain.com")
 
     elif text.startswith('/ihbar '):
         url = text[7:].strip()
         if url:
-            sonuc = ihbar_olustur(url)
-            mesaj_gonder(chat_id, sonuc)
+            tarih = time.strftime("%d.%m.%Y %H:%M")
+            taslak = f"""<b>USOM İHBAR TASLAĞI</b>
+
+Konu: Zararlı URL Bildirimi - AY-YILDIZ Bot
+
+Tespit: {tarih}
+URL: {url}
+Kategori: Şüpheli Site
+
+Bu URL'yi usom@btkgov.tr adresine gönderin.
+
+AY-YILDIZ Siber Kalkan v{VERSIYON}"""
+            mesaj_gonder(chat_id, taslak)
         else:
-            mesaj_gonder(chat_id, "Kullanım: <code>/ihbar https://site.com</code>")
-
-    elif text.startswith('/durum'):
-        sonuc = sistem_durum()
-        mesaj_gonder(chat_id, sonuc)
-
+            mesaj_gonder(chat_id, "Kullanım: /ihbar https://zararli-site.com")
     else:
-        mesaj_gonder(chat_id, "❓ Anlaşılmadı. /yardim yazın.")
+        mesaj_gonder(chat_id, "Anlaşılmadı. /yardim yazın.")
 
-def bot_dongu():
+def bot_baslat():
     if not BOT_TOKEN:
         print(f"{Fore.RED}[X] BOT_TOKEN bulunamadı.{Style.RESET_ALL}")
         print(f"{Fore.YELLOW}[i] Termux: export AYYILDIZ_BOT_TOKEN='123:ABC'{Style.RESET_ALL}")
-        print(f"{Fore.YELLOW}[i] Admin ID: export AYYILDIZ_ADMIN_ID='123456789'{Style.RESET_ALL}")
-        print(f"{Fore.YELLOW}[i] Token almak: Telegram @BotFather -> /newbot{Style.RESET_ALL}")
+        print(f"{Fore.YELLOW}[i] Token almak: @BotFather -> /newbot{Style.RESET_ALL}")
         return
 
-    print(f"{Fore.GREEN}[✓] Bot başlatıldı. Komutlar aktif.{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}[✓] Bot başlatılıyor...{Style.RESET_ALL}")
     print(f"{Fore.CYAN}[i] Durdurmak için CTRL+C{Style.RESET_ALL}")
-    if ADMIN_ID:
-        print(f"{Fore.YELLOW}[i] Admin Modu: Sadece {ADMIN_ID} kullanabilir{Style.RESET_ALL}")
-    else:
-        print(f"{Fore.YELLOW}[i] Uyarı: Admin ID ayarlı değil. Herkes kullanabilir!{Style.RESET_ALL}")
 
     offset = 0
-    hata_sayac = 0
-
     while True:
         try:
             url = f"{API_URL}/getUpdates"
-            params = {'offset': offset, 'timeout': 30, 'allowed_updates': ['message']}
+            params = {'offset': offset, 'timeout': 30}
             r = requests.get(url, params=params, timeout=35)
-
-            if r.status_code!= 200:
-                print(f"{Fore.RED}[X] API Hata: {r.status_code}{Style.RESET_ALL}")
-                time.sleep(5)
-                continue
-
             data = r.json()
-            if not data.get('ok'):
-                print(f"{Fore.RED}[X] Telegram Hata: {data}{Style.RESET_ALL}")
-                time.sleep(5)
-                continue
 
-            for update in data['result']:
-                offset = update['update_id'] + 1
-                if 'message' in update and 'text' in update['message']:
-                    # Thread ile işle ki bot donmasın
-                    threading.Thread(target=komut_isle, args=(update['message'],), daemon=True).start()
-
-            hata_sayac = 0
-            time.sleep(0.5)
-
+            if data.get('ok'):
+                for update in data['result']:
+                    offset = update['update_id'] + 1
+                    if 'message' in update:
+                        komut_isle(update['message'])
+            time.sleep(1)
         except KeyboardInterrupt:
             print(f"\n{Fore.YELLOW}[!] Bot durduruldu.{Style.RESET_ALL}")
             break
         except Exception as e:
-            hata_sayac += 1
-            print(f"{Fore.RED}[X] Bot hatası ({hata_sayac}): {e}{Style.RESET_ALL}")
-            if hata_sayac > 10:
-                print(f"{Fore.RED}[X] Çok fazla hata. Bot durduruluyor.{Style.RESET_ALL}")
-                break
+            print(f"{Fore.RED}[X] Bot hatası: {e}{Style.RESET_ALL}")
             time.sleep(5)
 
 def main():
     while True:
         logo()
         print(f"\n{Fore.WHITE}[1] Telegram Botunu Başlat{Style.RESET_ALL}")
-        print(f"{Fore.WHITE}[2] Token/Admin ID Ayarı{Style.RESET_ALL}")
-        print(f"{Fore.WHITE}[3] Test Mesajı Gönder{Style.RESET_ALL}")
+        print(f"{Fore.WHITE}[2] Token Ayarı Nasıl Yapılır?{Style.RESET_ALL}")
         print(f"{Fore.WHITE}[Q] Ana Menüye Dön{Style.RESET_ALL}")
         print(f"\n{Fore.RED}{'='*80}{Style.RESET_ALL}")
-        secim = input(f"{Fore.YELLOW}TG-KOMUT > Seçim: {Style.RESET_ALL}").strip().lower()
+        secim = input(f"{Fore.YELLOW}TELEGRAM-BOT > Seçim: {Style.RESET_ALL}").strip().lower()
 
         if secim == "1":
-            bot_dongu()
+            bot_baslat()
             input(f"\n{Fore.WHITE}Devam etmek için Enter...{Style.RESET_ALL}")
-
         elif secim == "2":
-            print(f"\n{Fore.CYAN}[i] TELEGRAM BOT KURULUMU:{Style.RESET_ALL}")
-            print(f"{Fore.WHITE}1. @BotFather -> /newbot -> Token al{Style.RESET_ALL}")
-            print(f"{Fore.WHITE}2. Termux: export AYYILDIZ_BOT_TOKEN='token'{Style.RESET_ALL}")
-            print(f"{Fore.WHITE}3. Admin ID öğren: @userinfobot -> ID'ni al{Style.RESET_ALL}")
-            print(f"{Fore.WHITE}4. Termux: export AYYILDIZ_ADMIN_ID='id'{Style.RESET_ALL}")
-            print(f"{Fore.WHITE}5. Kalıcı: echo 'export AYYILDIZ_BOT_TOKEN=...' >> ~/.bashrc{Style.RESET_ALL}")
+            print(f"\n{Fore.CYAN}[i] TELEGRAM BOT TOKEN ALMA:{Style.RESET_ALL}")
+            print(f"{Fore.WHITE}1. Telegram'da @BotFather ara{Style.RESET_ALL}")
+            print(f"{Fore.WHITE}2. /newbot komutu gönder{Style.RESET_ALL}")
+            print(f"{Fore.WHITE}3. Bot adı ve kullanıcı adı belirle{Style.RESET_ALL}")
+            print(f"{Fore.WHITE}4. Verilen TOKEN'ı kopyala{Style.RESET_ALL}")
+            print(f"{Fore.WHITE}5. Termux: export AYYILDIZ_BOT_TOKEN='TOKEN'{Style.RESET_ALL}")
+            print(f"{Fore.WHITE}6. Kalıcı yapmak: echo 'export AYYILDIZ_BOT_TOKEN=TOKEN' >> ~/.bashrc{Style.RESET_ALL}")
             input(f"\n{Fore.WHITE}Devam etmek için Enter...{Style.RESET_ALL}")
-
-        elif secim == "3":
-            if not BOT_TOKEN:
-                print(f"{Fore.RED}[X] Önce token ayarla.{Style.RESET_ALL}")
-            else:
-                test_id = input(f"{Fore.WHITE}Test Chat ID: {Style.RESET_ALL}").strip()
-                if test_id:
-                    if mesaj_gonder(test_id, "🇹🇷 AY-YILDIZ Bot Test Mesajı\nSistem Aktif"):
-                        print(f"{Fore.GREEN}[✓] Mesaj gönderildi.{Style.RESET_ALL}")
-                    else:
-                        print(f"{Fore.RED}[X] Gönderilemedi.{Style.RESET_ALL}")
-            input(f"\n{Fore.WHITE}Devam etmek için Enter...{Style.RESET_ALL}")
-
         elif secim == "q": break
 
 if __name__ == "__main__":

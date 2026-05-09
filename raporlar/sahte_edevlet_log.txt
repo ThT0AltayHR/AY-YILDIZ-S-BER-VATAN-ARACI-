@@ -1,0 +1,2 @@
+[2026-05-08 18:47:03] [BİLGİ] [SAHTE E-DEVLET DEDEKTÖRÜ] Sahte e-Devlet Dedektörü başlatıldı.
+[2026-05-08 18:47:08] [BİLGİ] [SAHTE E-DEVLET DEDEKTÖRÜ] Kullanıcı çıkış yaptı.

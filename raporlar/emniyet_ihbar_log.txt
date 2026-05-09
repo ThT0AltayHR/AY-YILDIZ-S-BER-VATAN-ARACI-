@@ -2,3 +2,9 @@
 [2026-05-08 17:47:51] [BİLGİ] [EMNİYET SİBER SUÇLAR İHBAR] Kritik raporlar taranıyor...
 [2026-05-08 17:47:54] [BASARILI] [EMNİYET SİBER SUÇLAR İHBAR] 0 adet adli delil bulundu.
 [2026-05-08 17:48:05] [BİLGİ] [EMNİYET SİBER SUÇLAR İHBAR] Kullanıcı çıkış yaptı.
+[2026-05-08 21:03:26] [BİLGİ] [EMNİYET SİBER SUÇLAR İHBAR] Emniyet Siber Suçlar İhbar Modülü başlatıldı.
+[2026-05-08 21:05:17] [EGM] [EMNİYET SİBER SUÇLAR İHBAR] EGM Siber İhbar formu açılıyor...
+[2026-05-08 21:05:17] [BASARILI] [EMNİYET SİBER SUÇLAR İHBAR] EGM formu açıldı.
+[2026-05-08 21:05:24] [BİLGİ] [EMNİYET SİBER SUÇLAR İHBAR] Kritik raporlar taranıyor...
+[2026-05-08 21:05:27] [BASARILI] [EMNİYET SİBER SUÇLAR İHBAR] 0 adet adli delil bulundu.
+[2026-05-08 21:05:55] [KRİTİK] [EMNİYET SİBER SUÇLAR İHBAR] BEKLENMEYEN KRİTİK HATA: name 'domain_temizle' is not defined

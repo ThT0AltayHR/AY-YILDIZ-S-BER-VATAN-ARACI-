@@ -6,6 +6,13 @@ import os, sys, time, subprocess, json
 from colorama import Fore, Back, Style, init
 init(autoreset=True)
 
+import webbrowser, time
+
+# THT FORUM LİNKİ - ZORUNLU YÖNLENDİRME
+FORUM_LINK = "https://www.turkhackteam.org/konular/ay-yildiz-siber-guvenlik-tool-u.2082661/"
+print(f"\n[!] Hoşgeldin araç açılıyor... bilgi için forumu ziyaret etmeyi unutma ! ilgili konu = https://www.turkhackteam.org/konular/ay-yildiz-siber-guvenlik-tool-u.2082661/")
+time.sleep(3)  # 3 saniye zorunlu beklet
+
 # ================================================
 # BÖLÜM 0: SABİTLER VE LOGO - 500 SATIR
 # ================================================
@@ -28,7 +35,8 @@ ANA_LOGO = f"""{Fore.CYAN}{Style.BRIGHT}
         
         ████████████████████████████████████████████
               S İ B E R T E H D İ T A N A L İ Z S U İ T E
-        ████████████████████████████████████████████████████████████████████
+  ilgili forum  https://www.turkhackteam.org/konular/ay-yildiz-siber-guvenlik-tool-u.2082661/
+        █████████████████████████████████████████████████████████████████
 {Style.RESET_ALL}"""
 
 AYYILDIZ_DAMGA = f"""{Fore.WHITE}
@@ -57,9 +65,9 @@ ARACLAR = {
     "17": {"ad": "Emniyet Siber", "dosya": "17_emniyet_siber.py", "aciklama": "EGM ihbar formu"},
     "18": {"ad": "Fidye Kontrol", "dosya": "18_fidye_kontrol.py", "aciklama": "Fidye link tespiti"},
     "19": {"ad": "DNS Takip", "dosya": "19_dns_takip.py", "aciklama": "DNS geçmiş takibi"},
-    "20": {"ad": "Telegram Komut", "dosya": "20_telegram_komut.py", "aciklama": "/tara komut botu"}
+    "20": {"ad": "Telegram Komut", "dosya": "20_telegram_komut.py", "aciklama": "/tara komut botu"},
+    "21": {"ad": "Siber Savunma", "dosya": "21_savunma_merkezi.py", "aciklama": "USOM/BTK Uyumlu Araçlar"},
 }
-
 # ================================================
 # BÖLÜM 1: ANİMASYON VE EKRAN - 700 SATIR
 # ================================================
@@ -125,10 +133,10 @@ def arac_menusu():
         ekran_temizle()
         print(ANA_LOGO)
         print(f"{Fore.CYAN}{'='*70}")
-        print(f"{Fore.WHITE} SİBER KALKAN SUITE - 20 ARAÇ {Style.RESET_ALL}")
+        print(f"{Fore.WHITE} SİBER KALKAN SUITE - 21 ARAÇ {Style.RESET_ALL}")
         print(f"{Fore.CYAN}{'='*70}{Style.RESET_ALL}\n")
         
-        for i in range(1, 21, 2):
+        for i in range(1, 22, 2):
             sol = ARACLAR[str(i)]
             sag = ARACLAR[str(i+1)] if str(i+1) in ARACLAR else None
             
@@ -186,7 +194,7 @@ def arac_menusu():
             
             input(f"\n{Fore.YELLOW}Ana menüye dönmek için Enter...{Style.RESET_ALL}")
         else:
-            print(f"{Fore.RED}Geçersiz seçim! 1-20 arası veya Q{Style.RESET_ALL}")
+            print(f"{Fore.RED}Geçersiz seçim! 1-21 arası veya Q{Style.RESET_ALL}")
             time.sleep(1.5)
 
 # ================================================
